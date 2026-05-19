@@ -18,7 +18,7 @@ Served model name:
 
 ## Working profile
 
-- Runtime: `lmsysorg/sglang:dev-cu13-nemotronh-nano-omni-reasoning-v3`
+- Runtime image: SGLang Nemotron dev image `lmsysorg/sglang:dev-cu13-nemotronh-nano-omni-reasoning-v3`
 - Main model: `NemotronHForCausalLM`
 - MTP draft: built-in model MTP layer, loaded as `NemotronHForCausalLMMTP`
 - Quantization: `modelopt_fp4` / runtime reports `modelopt_mixed`

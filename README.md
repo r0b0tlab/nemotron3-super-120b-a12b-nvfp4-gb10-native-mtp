@@ -6,7 +6,8 @@ Credit: @mr-r0b0t on X — r0b0tlab.
 
 ## Headline result
 
-- Runtime: SGLang Nemotron image `lmsysorg/sglang:dev-cu13-nemotronh-nano-omni-reasoning-v3`
+- Served model: `NVIDIA/Nemotron-3-Super-120B-A12B-NVFP4`
+- Runtime image: SGLang Nemotron dev image `lmsysorg/sglang:dev-cu13-nemotronh-nano-omni-reasoning-v3`
 - Quantization: NVIDIA ModelOpt NVFP4
 - Backend: `flashinfer_cutlass`
 - Reasoning parser: `nemotron_3`

@@ -4,6 +4,7 @@ set -euo pipefail
 PROJECT=${ROOT:-$PWD}
 MODEL_DIR=${MODEL_DIR:-${MODEL_HOST:-/path/to/NVIDIA-Nemotron-3-Super-120B-A12B-NVFP4}}
 PORT=${PORT:-30000}
+# SGLang Nemotron dev image used to serve the Nemotron-3-Super checkpoint.
 IMAGE=${IMAGE:-lmsysorg/sglang:dev-cu13-nemotronh-nano-omni-reasoning-v3}
 RUN_DIR=${RUN_DIR:-$PROJECT/runs/$(date -u +%Y%m%dT%H%M%SZ)-super120-mtp-nvfp4}
 CONTAINER=${CONTAINER:-sglang-nemotron-super-mtp}
