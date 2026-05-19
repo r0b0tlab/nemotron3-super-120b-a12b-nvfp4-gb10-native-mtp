@@ -1,0 +1,12 @@
+{
+  "elapsed_sec": 7.393819332122803,
+  "usage": {
+    "prompt_tokens": 37,
+    "total_tokens": 197,
+    "completion_tokens": 160,
+    "prompt_tokens_details": null,
+    "reasoning_tokens": 125
+  },
+  "completion_tok_s": 21.639695644830315,
+  "content": "```python\ndef fib(n):\n    a,b=0,1\n    for _ in range(n):\n        a,b=b,a+b\n    return a\n```"
+}

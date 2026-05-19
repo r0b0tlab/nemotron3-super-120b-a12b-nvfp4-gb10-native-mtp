@@ -1,0 +1,35 @@
+{
+  "wall_sec": 5.001575469970703,
+  "total_completion_tokens": 99,
+  "aggregate_tok_s": 19.793763104124448,
+  "results": [
+    {
+      "name": "arithmetic",
+      "ok": true,
+      "elapsed_sec": 2.2524595260620117,
+      "completion_tokens": 42,
+      "content": "42",
+      "usage": {
+        "prompt_tokens": 31,
+        "total_tokens": 73,
+        "completion_tokens": 42,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 38
+      }
+    },
+    {
+      "name": "exact",
+      "ok": true,
+      "elapsed_sec": 2.7490909099578857,
+      "completion_tokens": 57,
+      "content": "pineapple",
+      "usage": {
+        "prompt_tokens": 26,
+        "total_tokens": 83,
+        "completion_tokens": 57,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 53
+      }
+    }
+  ]
+}

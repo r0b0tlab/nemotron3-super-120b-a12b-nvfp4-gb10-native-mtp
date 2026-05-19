@@ -1,0 +1,62 @@
+{
+  "source": "<local-nemotron-project>/reports/ncu_priv_container_flashinfer_nvfp4_tensor_20260519T024933Z.csv",
+  "kernels": [
+    {
+      "id": 0,
+      "cc": "12.1",
+      "kernel_short": "SM120_16x8x64_TN_VS<float_e2m1_t,...>",
+      "has_sm120": true,
+      "has_blockscaled": true,
+      "has_fp4_e2m1": true,
+      "has_ue4m3_scale": true,
+      "gpu_time_ns": 99136,
+      "cycles_avg": 210964.5,
+      "tensor_inst_sum": 524288,
+      "hmma_inst_sum": 524288,
+      "fp4_dst_fp32_ops_sum": 8589934592,
+      "fp4_fp6_dst_fp32_ops_sum": 0,
+      "tensor_cycles_active_sum": 8388608,
+      "sm_count": 48,
+      "block_size": 384,
+      "grid_size": 48
+    },
+    {
+      "id": 1,
+      "cc": "12.1",
+      "kernel_short": "SM120_16x8x64_TN_VS<float_e2m1_t,...>",
+      "has_sm120": true,
+      "has_blockscaled": true,
+      "has_fp4_e2m1": true,
+      "has_ue4m3_scale": true,
+      "gpu_time_ns": 66368,
+      "cycles_avg": 141563.0,
+      "tensor_inst_sum": 524288,
+      "hmma_inst_sum": 524288,
+      "fp4_dst_fp32_ops_sum": 8589934592,
+      "fp4_fp6_dst_fp32_ops_sum": 0,
+      "tensor_cycles_active_sum": 8388608,
+      "sm_count": 48,
+      "block_size": 384,
+      "grid_size": 48
+    },
+    {
+      "id": 2,
+      "cc": "12.1",
+      "kernel_short": "SM120_16x8x64_TN_VS<float_e2m1_t,...>",
+      "has_sm120": true,
+      "has_blockscaled": true,
+      "has_fp4_e2m1": true,
+      "has_ue4m3_scale": true,
+      "gpu_time_ns": 65792,
+      "cycles_avg": 140065.75,
+      "tensor_inst_sum": 524288,
+      "hmma_inst_sum": 524288,
+      "fp4_dst_fp32_ops_sum": 8589934592,
+      "fp4_fp6_dst_fp32_ops_sum": 0,
+      "tensor_cycles_active_sum": 8388608,
+      "sm_count": 48,
+      "block_size": 384,
+      "grid_size": 48
+    }
+  ]
+}

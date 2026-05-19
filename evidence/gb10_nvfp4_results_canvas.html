@@ -1,0 +1,1026 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GB10 Optimized NVFP4 — Evidence Board</title>
+  <style>
+    :root {
+      --bg: #050510;
+      --bg-2: #070914;
+      --panel: rgba(10, 14, 26, 0.86);
+      --panel-strong: rgba(12, 18, 31, 0.94);
+      --ink: #f0f0f5;
+      --muted: #aab4c8;
+      --dim: #6f7a92;
+      --line: rgba(240, 240, 245, 0.14);
+      --line-strong: rgba(240, 240, 245, 0.24);
+      --green: #00ff88;
+      --magenta: #ff00e5;
+      --cyan: #00e5ff;
+      --amber: #ffb800;
+      --red: #ff4d6d;
+      --radius: 28px;
+      --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --display: "Space Grotesk", Inter, ui-sans-serif, system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { background: var(--bg); }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: var(--sans);
+      background:
+        radial-gradient(circle at 10% 12%, rgba(255, 0, 229, 0.18), transparent 28%),
+        radial-gradient(circle at 85% 8%, rgba(0, 229, 255, 0.17), transparent 30%),
+        radial-gradient(circle at 52% 100%, rgba(0, 255, 136, 0.12), transparent 34%),
+        linear-gradient(135deg, #050510 0%, #070914 52%, #050510 100%);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.42;
+      background-image:
+        linear-gradient(rgba(240,240,245,.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(240,240,245,.052) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(circle at 50% 45%, black, transparent 74%);
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: -20%;
+      pointer-events: none;
+      opacity: .26;
+      background:
+        conic-gradient(from 180deg at 50% 50%, transparent 0 18%, rgba(0,255,136,.24), transparent 35% 58%, rgba(0,229,255,.2), transparent 72% 100%);
+      animation: drift 28s linear infinite;
+      filter: blur(46px);
+    }
+
+    @keyframes drift { to { transform: rotate(360deg); } }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      width: min(1760px, calc(100vw - 48px));
+      margin: 24px auto 40px;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: rgba(255,255,255,.045);
+      backdrop-filter: blur(18px);
+    }
+
+    .toolbar .label { font: 800 12px/1 var(--mono); color: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
+    .toolbar button {
+      min-height: 40px;
+      border: 1px solid var(--line-strong);
+      border-radius: 999px;
+      padding: 0 15px;
+      background: rgba(255,255,255,.07);
+      color: var(--ink);
+      font: 800 12px/1 var(--mono);
+      cursor: pointer;
+    }
+    .toolbar button:hover { border-color: rgba(0,229,255,.65); background: rgba(0,229,255,.09); }
+    .toolbar button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+
+    .board {
+      min-height: 1080px;
+      border: 1px solid var(--line-strong);
+      border-radius: 36px;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.068), rgba(255,255,255,.018)),
+        rgba(5,5,16,.9);
+      box-shadow: 0 40px 140px rgba(0,0,0,.48);
+    }
+
+    .hero {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1.25fr .75fr;
+      gap: 28px;
+      padding: 46px 50px 28px;
+      border-bottom: 1px solid var(--line);
+      background:
+        radial-gradient(circle at 88% 18%, rgba(0,229,255,.18), transparent 26%),
+        radial-gradient(circle at 8% 10%, rgba(0,255,136,.13), transparent 28%);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      width: fit-content;
+      margin-bottom: 18px;
+      padding: 9px 13px;
+      border: 1px solid rgba(0,255,136,.38);
+      border-radius: 999px;
+      background: rgba(0,255,136,.08);
+      color: var(--green);
+      font: 900 12px/1 var(--mono);
+      letter-spacing: .10em;
+      text-transform: uppercase;
+    }
+
+    .pulse {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 18px var(--green);
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 1040px;
+      font-family: var(--display);
+      font-size: clamp(62px, 5.9vw, 104px);
+      line-height: .88;
+      letter-spacing: -0.07em;
+      text-wrap: balance;
+    }
+
+    .lead {
+      max-width: 920px;
+      margin: 24px 0 0;
+      color: var(--muted);
+      font-size: 23px;
+      line-height: 1.36;
+      text-wrap: pretty;
+    }
+
+    .hero-side {
+      align-self: stretch;
+      display: grid;
+      gap: 14px;
+      grid-template-rows: 1fr auto;
+    }
+
+    .kernel-card {
+      position: relative;
+      min-height: 210px;
+      border: 1px solid rgba(0,229,255,.28);
+      border-radius: 30px;
+      background:
+        radial-gradient(circle at 82% 20%, rgba(0,229,255,.2), transparent 38%),
+        linear-gradient(145deg, rgba(8,20,32,.94), rgba(10,10,26,.92));
+      overflow: hidden;
+      padding: 24px;
+    }
+
+    .kernel-card::before {
+      content: "";
+      position: absolute;
+      inset: auto -10% -42% -10%;
+      height: 75%;
+      background: repeating-linear-gradient(90deg, rgba(0,229,255,.2) 0 1px, transparent 1px 22px);
+      transform: perspective(600px) rotateX(62deg);
+      opacity: .38;
+    }
+
+    .kernel-title { position: relative; color: var(--cyan); font: 900 13px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+    .kernel-name { position: relative; margin-top: 20px; font: 900 28px/.95 var(--display); letter-spacing: -.04em; }
+    .kernel-detail { position: relative; margin-top: 16px; color: var(--muted); font: 800 14px/1.55 var(--mono); }
+
+    .route {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 9px 11px;
+      background: rgba(255,255,255,.055);
+      color: var(--ink);
+      font: 800 12px/1 var(--mono);
+      white-space: nowrap;
+    }
+    .chip.green { color: var(--green); border-color: rgba(0,255,136,.34); background: rgba(0,255,136,.075); }
+    .chip.cyan { color: var(--cyan); border-color: rgba(0,229,255,.34); background: rgba(0,229,255,.075); }
+    .chip.magenta { color: var(--magenta); border-color: rgba(255,0,229,.34); background: rgba(255,0,229,.075); }
+    .chip.amber { color: var(--amber); border-color: rgba(255,184,0,.34); background: rgba(255,184,0,.075); }
+
+    .content {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(420px, .92fr);
+      gap: 24px;
+      padding: 24px;
+    }
+
+    .stack { display: grid; gap: 24px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: 0 22px 70px rgba(0,0,0,.28);
+      overflow: hidden;
+    }
+
+    .panel.pad { padding: 24px; }
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 18px;
+      padding: 22px 24px 16px;
+      border-bottom: 1px solid var(--line);
+    }
+    .panel-kicker { color: var(--dim); font: 900 11px/1 var(--mono); letter-spacing: .11em; text-transform: uppercase; }
+    h2 { margin: 7px 0 0; font: 900 25px/1.05 var(--display); letter-spacing: -.035em; }
+    h3 { margin: 0; font: 900 17px/1.15 var(--display); letter-spacing: -.025em; }
+    p { margin: 0; color: var(--muted); line-height: 1.48; }
+
+    .metric-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      padding: 18px;
+    }
+
+    .metric {
+      position: relative;
+      min-height: 158px;
+      border: 1px solid rgba(240,240,245,.12);
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.025));
+      padding: 18px;
+      overflow: hidden;
+    }
+
+    .metric::after {
+      content: "";
+      position: absolute;
+      inset: auto 12px 12px auto;
+      width: 52px;
+      height: 52px;
+      border-radius: 18px;
+      border: 1px solid currentColor;
+      opacity: .16;
+    }
+
+    .metric .label { color: var(--muted); font: 900 12px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+    .metric .value { margin-top: 14px; font: 950 52px/.82 var(--display); letter-spacing: -.06em; }
+    .metric .note { margin-top: 14px; color: var(--muted); font-size: 14px; line-height: 1.35; }
+    .metric.green { color: var(--green); }
+    .metric.cyan { color: var(--cyan); }
+    .metric.magenta { color: var(--magenta); }
+    .metric.amber { color: var(--amber); }
+
+    .bar-chart { padding: 18px 24px 24px; display: grid; gap: 15px; }
+    .bar-line { display: grid; grid-template-columns: 130px 1fr 92px; gap: 14px; align-items: center; }
+    .bar-label { color: var(--muted); font: 850 12px/1 var(--mono); text-transform: uppercase; letter-spacing: .04em; }
+    .bar-track { height: 18px; border-radius: 999px; background: rgba(255,255,255,.07); overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--green), var(--cyan)); box-shadow: 0 0 20px rgba(0,255,136,.25); }
+    .bar-value { text-align: right; font: 900 13px/1 var(--mono); }
+
+    .proof-list { display: grid; gap: 13px; padding: 18px 24px 24px; }
+    .proof-item {
+      display: grid;
+      grid-template-columns: 36px 1fr;
+      gap: 12px;
+      align-items: start;
+      padding: 14px;
+      border: 1px solid rgba(240,240,245,.11);
+      border-radius: 18px;
+      background: rgba(255,255,255,.035);
+    }
+    .proof-dot {
+      width: 28px; height: 28px; border-radius: 10px;
+      display: grid; place-items: center;
+      color: #050510; background: var(--green);
+      font: 950 15px/1 var(--mono);
+    }
+    .proof-item:nth-child(2) .proof-dot { background: var(--cyan); }
+    .proof-item:nth-child(3) .proof-dot { background: var(--magenta); }
+    .proof-item:nth-child(4) .proof-dot { background: var(--amber); }
+    .proof-title { font-weight: 850; color: var(--ink); }
+    .proof-copy { margin-top: 4px; font-size: 14px; color: var(--muted); }
+
+    .code-card {
+      border-radius: 24px;
+      border: 1px solid rgba(0,229,255,.18);
+      background: #060914;
+      overflow: hidden;
+    }
+    .code-title { padding: 12px 15px; border-bottom: 1px solid var(--line); color: var(--cyan); font: 850 12px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+    pre { margin: 0; padding: 16px; white-space: pre-wrap; word-break: break-word; color: #d8e6f4; font: 750 12px/1.48 var(--mono); }
+    .token-green { color: var(--green); }
+    .token-cyan { color: var(--cyan); }
+    .token-amber { color: var(--amber); }
+
+    .callout {
+      display: grid;
+      grid-template-columns: 62px 1fr;
+      gap: 16px;
+      align-items: start;
+      padding: 22px;
+      border-radius: 26px;
+      border: 1px solid rgba(255,184,0,.28);
+      background: linear-gradient(135deg, rgba(255,184,0,.10), rgba(255,255,255,.03));
+    }
+    .callout-icon { width: 62px; height: 62px; border-radius: 20px; display: grid; place-items: center; color: #050510; background: var(--amber); font: 950 26px/1 var(--mono); }
+
+    .timeline { padding: 24px; display: grid; gap: 16px; }
+    .step { display: grid; grid-template-columns: 92px 1fr; gap: 16px; align-items: start; }
+    .step-num { color: var(--green); font: 950 13px/1 var(--mono); letter-spacing: .08em; }
+    .step-body { padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+    .step:last-child .step-body { border-bottom: 0; padding-bottom: 0; }
+    .step-body strong { display: block; margin-bottom: 5px; color: var(--ink); }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 20px;
+      padding: 22px 50px 34px;
+      border-top: 1px solid var(--line);
+      color: var(--dim);
+      font: 800 12px/1.55 var(--mono);
+    }
+    .watermark { color: rgba(240,240,245,.62); }
+
+    .compact-note { font: 800 12px/1.5 var(--mono); color: var(--dim); }
+    .accent-green { color: var(--green); }
+    .accent-cyan { color: var(--cyan); }
+    .accent-magenta { color: var(--magenta); }
+    .accent-amber { color: var(--amber); }
+
+    @media (max-width: 1180px) {
+      .hero, .content { grid-template-columns: 1fr; }
+      .hero { padding: 36px 28px 24px; }
+      .content { padding: 18px; }
+      .metric-row, .grid-3 { grid-template-columns: 1fr; }
+      .grid-2 { grid-template-columns: 1fr; }
+      h1 { font-size: clamp(48px, 11vw, 80px); }
+      .lead { font-size: 19px; }
+      .footer { padding-inline: 28px; flex-direction: column; align-items: start; }
+    }
+
+
+
+    /* Mobile optimization pass: phone-first spacing, typography, and scan order. */
+    @media (max-width: 760px) {
+      body {
+        background:
+          radial-gradient(circle at 18% 4%, rgba(0, 255, 136, 0.16), transparent 26%),
+          radial-gradient(circle at 82% 0%, rgba(0, 229, 255, 0.15), transparent 30%),
+          linear-gradient(180deg, #050510 0%, #070914 52%, #050510 100%);
+      }
+
+      body::before {
+        background-size: 34px 34px;
+        opacity: .24;
+        mask-image: linear-gradient(180deg, black, transparent 78%);
+      }
+
+      body::after { opacity: .16; filter: blur(34px); }
+
+      .page {
+        width: min(100vw - 20px, 460px);
+        margin: 10px auto 22px;
+      }
+
+      .toolbar {
+        position: sticky;
+        top: 8px;
+        z-index: 5;
+        margin-bottom: 10px;
+        padding: 8px;
+        border-radius: 16px;
+        background: rgba(5, 5, 16, .72);
+      }
+
+      .toolbar .label {
+        font-size: 10px;
+        line-height: 1.25;
+        max-width: 210px;
+      }
+
+      .toolbar button {
+        min-height: 44px;
+        padding: 0 12px;
+        font-size: 10px;
+        white-space: nowrap;
+      }
+
+      .board {
+        min-height: 0;
+        border-radius: 24px;
+        box-shadow: 0 22px 80px rgba(0,0,0,.42);
+      }
+
+      .hero {
+        display: block;
+        padding: 24px 16px 16px;
+        background:
+          radial-gradient(circle at 96% 12%, rgba(0,229,255,.14), transparent 36%),
+          radial-gradient(circle at 0% 0%, rgba(0,255,136,.10), transparent 34%);
+      }
+
+      .eyebrow {
+        max-width: 100%;
+        margin-bottom: 14px;
+        padding: 8px 10px;
+        font-size: 10px;
+        letter-spacing: .07em;
+        white-space: normal;
+      }
+
+      .pulse { width: 7px; height: 7px; flex: 0 0 auto; }
+
+      h1 {
+        max-width: 100%;
+        font-size: clamp(39px, 13.2vw, 57px);
+        line-height: .91;
+        letter-spacing: -0.058em;
+      }
+
+      .lead {
+        margin-top: 16px;
+        font-size: 16px;
+        line-height: 1.42;
+        max-width: 100%;
+      }
+
+      .hero-side {
+        margin-top: 18px;
+        display: block;
+      }
+
+      .kernel-card {
+        min-height: 0;
+        padding: 17px;
+        border-radius: 22px;
+      }
+
+      .kernel-card::before { opacity: .22; }
+      .kernel-title { font-size: 10px; }
+      .kernel-name { margin-top: 12px; font-size: clamp(24px, 7.6vw, 32px); line-height: .98; }
+      .kernel-detail { margin-top: 10px; font-size: 11px; line-height: 1.45; }
+
+      .route {
+        margin-top: 12px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 36px;
+        padding: 8px 8px;
+        font-size: 10px;
+        line-height: 1.2;
+        text-align: center;
+        white-space: normal;
+      }
+
+      .content {
+        display: block;
+        padding: 10px;
+      }
+
+      .stack { gap: 12px; }
+      .content > .stack + .stack { margin-top: 12px; }
+
+      .panel {
+        border-radius: 21px;
+        box-shadow: 0 14px 42px rgba(0,0,0,.25);
+      }
+
+      .panel.pad { padding: 14px; }
+
+      .panel-head {
+        display: block;
+        padding: 16px 15px 12px;
+      }
+
+      .panel-head .chip {
+        width: fit-content;
+        max-width: 100%;
+        margin-top: 12px;
+        justify-content: flex-start;
+        padding-inline: 12px;
+      }
+
+      .panel-kicker { font-size: 10px; letter-spacing: .09em; }
+      h2 { margin-top: 6px; font-size: 22px; line-height: 1.02; }
+      h3 { font-size: 18px; }
+
+      .metric-row {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 10px;
+      }
+
+      .metric {
+        min-height: 0;
+        padding: 15px;
+        border-radius: 19px;
+      }
+
+      .metric::after {
+        width: 38px;
+        height: 38px;
+        border-radius: 14px;
+        inset: 10px 10px auto auto;
+      }
+
+      .metric .label { font-size: 10px; }
+      .metric .value { margin-top: 10px; font-size: clamp(42px, 14vw, 58px); }
+      .metric .note { margin-top: 9px; font-size: 13px; }
+
+      .bar-chart {
+        padding: 8px 12px 15px;
+        gap: 13px;
+      }
+
+      .bar-line {
+        grid-template-columns: 1fr 76px;
+        gap: 8px 10px;
+      }
+
+      .bar-label {
+        grid-column: 1 / -1;
+        font-size: 10px;
+      }
+
+      .bar-track { height: 16px; }
+      .bar-value { font-size: 11px; }
+
+      .proof-list {
+        padding: 10px;
+        gap: 9px;
+      }
+
+      .proof-item {
+        grid-template-columns: 30px 1fr;
+        gap: 10px;
+        padding: 12px;
+        border-radius: 16px;
+      }
+
+      .proof-dot {
+        width: 26px;
+        height: 26px;
+        border-radius: 9px;
+        font-size: 13px;
+      }
+
+      .proof-title { font-size: 14px; line-height: 1.25; }
+      .proof-copy { font-size: 12px; line-height: 1.4; }
+      code { overflow-wrap: anywhere; word-break: break-word; }
+
+      .code-card { border-radius: 18px; }
+      .code-title { padding: 10px 12px; font-size: 10px; }
+      pre {
+        padding: 12px;
+        font-size: 10.5px;
+        line-height: 1.5;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .timeline {
+        padding: 14px;
+        gap: 13px;
+      }
+
+      .step {
+        grid-template-columns: 54px 1fr;
+        gap: 10px;
+      }
+
+      .step-num { font-size: 11px; }
+      .step-body { padding-bottom: 13px; }
+      .step-body strong { font-size: 14px; }
+      .step-body p { font-size: 13px; line-height: 1.42; }
+
+      .callout {
+        grid-template-columns: 44px 1fr;
+        gap: 12px;
+        padding: 15px;
+        border-radius: 21px;
+      }
+
+      .callout-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 15px;
+        font-size: 21px;
+      }
+
+      .callout p { font-size: 13px; line-height: 1.45; }
+      .compact-note { font-size: 10.5px; overflow-wrap: anywhere; }
+
+      .footer {
+        padding: 16px 16px 22px;
+        gap: 10px;
+        font-size: 10px;
+        line-height: 1.45;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .page { width: calc(100vw - 12px); margin-top: 6px; }
+      .toolbar { display: none; }
+      .board { border-radius: 18px; }
+      .hero { padding: 20px 12px 12px; }
+      h1 { font-size: clamp(34px, 12.4vw, 44px); }
+      .lead { font-size: 15px; }
+      .content { padding: 6px; }
+      .route { grid-template-columns: 1fr; }
+      .metric .value { font-size: 42px; }
+      .bar-line { grid-template-columns: 1fr; }
+      .bar-value { text-align: left; }
+      .step { grid-template-columns: 1fr; gap: 5px; }
+      .callout { grid-template-columns: 1fr; }
+    }
+
+
+
+    /* Mobile overflow fix: keep every evidence card inside the phone viewport. */
+    @media (max-width: 760px) {
+      html, body { max-width: 100%; overflow-x: hidden; }
+      .toolbar { display: none; }
+      .page, .board, .hero, .content, .stack, .panel, .panel-head,
+      .metric, .proof-item, .proof-item > div, .code-card, .callout,
+      .timeline, .step, .step-body, .kernel-card, .route, .footer {
+        max-width: 100%;
+        min-width: 0;
+      }
+      .page { width: calc(100vw - 14px); }
+      .board { overflow: hidden; }
+      h1, h2, h3, p, .lead, .kernel-name, .kernel-detail, .proof-title,
+      .proof-copy, .compact-note, .footer, .chip, pre, code {
+        overflow-wrap: anywhere;
+        word-break: normal;
+      }
+      .kernel-detail { padding-right: 2px; }
+      .bar-line {
+        grid-template-columns: 1fr;
+        gap: 7px;
+      }
+      .bar-label, .bar-value { grid-column: 1 / -1; }
+      .bar-value { text-align: left; color: var(--muted); }
+      .bar-track { width: 100%; }
+      .proof-item { grid-template-columns: 28px minmax(0, 1fr); }
+      .proof-copy code { white-space: normal; }
+      pre { white-space: pre-wrap; max-width: 100%; }
+    }
+
+
+
+    /* Phone viewport hard clamp. Prevent min-content sizing from long kernel names. */
+    @media (max-width: 760px) {
+      .page, .board, .hero, .content, .panel, .panel-head, .metric-row,
+      .bar-chart, .proof-list, .timeline, .footer, .kernel-card, .callout {
+        width: 100% !important;
+      }
+      .content, .hero, .panel-head, .panel.pad, .timeline, .footer,
+      .proof-list, .bar-chart, .metric-row {
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+      }
+      .page { width: 100vw !important; padding-left: 6px; padding-right: 6px; }
+      .board { border-radius: 20px; }
+      .hero { padding-top: 22px !important; }
+      .route { grid-template-columns: 1fr !important; }
+      .chip { width: 100%; }
+      .panel-head .chip { width: auto; max-width: 100%; }
+      h1 { font-size: clamp(36px, 12vw, 48px) !important; }
+      h2 { font-size: 21px !important; max-width: 100%; }
+      .kernel-name { font-size: clamp(22px, 7vw, 28px) !important; }
+      .metric .value { font-size: clamp(40px, 13vw, 52px) !important; }
+      .proof-item { grid-template-columns: 28px calc(100% - 38px) !important; }
+      .proof-item * { max-width: 100%; }
+      .proof-copy, .kernel-detail, pre, code { word-break: break-all; }
+    }
+
+
+
+    /* Final mobile typography clamp: prevent big display text from clipping on 360–430px phones. */
+    @media (max-width: 760px) {
+      h1 {
+        font-size: clamp(30px, 9.6vw, 38px) !important;
+        line-height: .98 !important;
+        letter-spacing: -0.045em !important;
+        overflow-wrap: break-word !important;
+        word-break: break-word !important;
+      }
+      h2 {
+        font-size: 18px !important;
+        line-height: 1.08 !important;
+        letter-spacing: -0.018em !important;
+        overflow-wrap: break-word !important;
+        word-break: break-word !important;
+      }
+      .lead {
+        font-size: 14.5px !important;
+        line-height: 1.45 !important;
+      }
+      .kernel-name {
+        font-size: 24px !important;
+        line-height: 1.02 !important;
+        overflow-wrap: break-word !important;
+        word-break: break-word !important;
+      }
+      .kernel-detail {
+        font-size: 10px !important;
+        line-height: 1.45 !important;
+      }
+      .proof-title {
+        font-size: 14px !important;
+        line-height: 1.22 !important;
+        overflow-wrap: break-word !important;
+        word-break: break-word !important;
+      }
+      .proof-copy {
+        font-size: 11.5px !important;
+        line-height: 1.42 !important;
+      }
+      .metric .value { font-size: 46px !important; }
+      .metric .note { font-size: 12.5px !important; }
+    }
+
+    @media (max-width: 380px) {
+      h1 { font-size: 29px !important; }
+      h2 { font-size: 17px !important; }
+      .kernel-name { font-size: 22px !important; }
+      .metric .value { font-size: 40px !important; }
+    }
+
+
+
+    /* Final phone width correction: avoid 100vw scrollbar overflow/cropping. */
+    @media (max-width: 760px) {
+      .page {
+        width: calc(100% - 20px) !important;
+        max-width: 430px !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+      }
+      .content, .hero, .panel-head, .metric-row, .bar-chart, .proof-list,
+      .timeline, .panel.pad, .footer {
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+      }
+      .board { width: 100% !important; max-width: 100% !important; }
+      h2 { padding-right: 4px; }
+      .bar-track { max-width: calc(100% - 2px); }
+    }
+
+
+
+    /* Conservative phone safe-area: narrower measure beats clipped viral metrics. */
+    @media (max-width: 760px) {
+      .page {
+        width: calc(100% - 44px) !important;
+        max-width: 390px !important;
+      }
+      .hero, .content, .panel-head, .metric-row, .bar-chart, .proof-list,
+      .timeline, .panel.pad, .footer {
+        padding-left: 7px !important;
+        padding-right: 7px !important;
+      }
+      h1 { font-size: clamp(27px, 8.8vw, 34px) !important; line-height: 1.02 !important; }
+      h2 { font-size: 16px !important; line-height: 1.12 !important; }
+      .lead { font-size: 13.5px !important; line-height: 1.48 !important; }
+      .kernel-name { font-size: 21px !important; }
+      .metric .value { font-size: 38px !important; }
+      .proof-title { font-size: 13px !important; }
+      .proof-copy { font-size: 10.5px !important; }
+    }
+
+
+
+    /* Mobile readable measure: force text to wrap before the screenshot edge. */
+    @media (max-width: 760px) {
+      .hero > div, .panel-head > div, .metric, .proof-item > div,
+      .step-body, .callout > div, .kernel-card {
+        max-width: min(100%, 288px) !important;
+      }
+      h1, h2, h3, .lead, p, .proof-title, .proof-copy, .kernel-name,
+      .kernel-detail, .metric .note, .compact-note {
+        max-width: 280px !important;
+      }
+      h2 { font-size: 15px !important; }
+      .lead { font-size: 12.8px !important; }
+      .proof-copy, .kernel-detail { font-size: 10px !important; }
+      .bar-chart, .metric-row, .proof-list { max-width: 300px !important; }
+    }
+
+    @media print {
+      body { background: var(--bg); }
+      .toolbar { display: none; }
+      .page { width: 100%; margin: 0; }
+      .board { border-radius: 0; box-shadow: none; }
+      body::after { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="toolbar" aria-label="Artifact controls">
+      <div class="label">r0b0tlab evidence board · no overlapping canvas text · DOM layout</div>
+      <button type="button" onclick="window.print()">PRINT / EXPORT PDF</button>
+    </div>
+
+    <article class="board" aria-label="GB10 optimized NVFP4 evidence board">
+      <section class="hero">
+        <div>
+          <div class="eyebrow"><span class="pulse"></span>GB10 Blackwell NVFP4 confirmed</div>
+          <h1>SM120 FP4 kernels, real MTP gain, stable 120B.</h1>
+          <p class="lead">The Super 120B path is no longer “it loaded once.” It is ModelOpt NVFP4, FlashInfer/CUTLASS FP4 GEMM + MoE, a built-in MTP layer that avoids double-loading, and root Nsight Compute proof that Blackwell FP4 tensor kernels are issuing work.</p>
+        </div>
+        <aside class="hero-side">
+          <div class="kernel-card">
+            <div class="kernel-title">Root Nsight Compute kernel</div>
+            <div class="kernel-name">SM120_16x8x64<br/>TN_VS FP4</div>
+            <div class="kernel-detail">float_e2m1_t payload · float_ue4m3_t scale · BlockScaled CUTLASS</div>
+          </div>
+          <div class="route" aria-label="runtime path">
+            <span class="chip green">ModelOpt NVFP4</span>
+            <span class="chip cyan">FlashInfer attention</span>
+            <span class="chip magenta">CUTLASS FP4 GEMM</span>
+            <span class="chip amber">NEXTN / EAGLE MTP</span>
+          </div>
+        </aside>
+      </section>
+
+      <section class="content">
+        <div class="stack">
+          <section class="panel" aria-label="main performance gains">
+            <div class="panel-head">
+              <div>
+                <div class="panel-kicker">The headline</div>
+                <h2>Super 120B gets a practical decode lift</h2>
+              </div>
+              <span class="chip green">+45.8%</span>
+            </div>
+            <div class="metric-row">
+              <div class="metric amber">
+                <div class="label">Safe baseline</div>
+                <div class="value">14.84</div>
+                <div class="note">tok/s · non-MTP NVFP4 long decode</div>
+              </div>
+              <div class="metric green">
+                <div class="label">MTP fast path</div>
+                <div class="value">21.64</div>
+                <div class="note">tok/s · built-in NemotronH MTP layer</div>
+              </div>
+              <div class="metric cyan">
+                <div class="label">Live recheck</div>
+                <div class="value">21.24</div>
+                <div class="note">tok/s · 112 completion tokens in 5.272s</div>
+              </div>
+            </div>
+            <div class="bar-chart" aria-label="throughput comparison">
+              <div class="bar-line"><div class="bar-label">baseline</div><div class="bar-track"><div class="bar-fill" style="width:64.5%"></div></div><div class="bar-value">14.84 tok/s</div></div>
+              <div class="bar-line"><div class="bar-label">MTP check</div><div class="bar-track"><div class="bar-fill" style="width:94.1%"></div></div><div class="bar-value">21.64 tok/s</div></div>
+              <div class="bar-line"><div class="bar-label">server log</div><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><div class="bar-value">23.02 tok/s</div></div>
+            </div>
+          </section>
+
+          <section class="panel" aria-label="root ncu evidence">
+            <div class="panel-head">
+              <div>
+                <div class="panel-kicker">Hardware-counter proof</div>
+                <h2>NCU sees FP4 tensor-path work</h2>
+              </div>
+              <span class="chip cyan">CC 12.1</span>
+            </div>
+            <div class="metric-row">
+              <div class="metric green">
+                <div class="label">FP4→FP32 ops</div>
+                <div class="value">8.59B</div>
+                <div class="note">per profiled GEMM iteration</div>
+              </div>
+              <div class="metric cyan">
+                <div class="label">Tensor inst.</div>
+                <div class="value">524K</div>
+                <div class="note">tensor-pipe + HMMA-family instructions</div>
+              </div>
+              <div class="metric magenta">
+                <div class="label">Active cycles</div>
+                <div class="value">8.39M</div>
+                <div class="note">tensor active cycles counted by NCU</div>
+              </div>
+            </div>
+            <div class="proof-list">
+              <div class="proof-item"><div class="proof-dot">1</div><div><div class="proof-title">Kernel name is explicit, not inferred.</div><div class="proof-copy"><code>MainloopSm120TmaWarpSpecializedBlockScaled</code> and <code>KernelTmaWarpSpecializedCooperativeBlockScaledSm120</code>.</div></div></div>
+              <div class="proof-item"><div class="proof-dot">2</div><div><div class="proof-title">FP4 payload and scale format are visible.</div><div class="proof-copy"><code>float_e2m1_t</code> inputs with <code>float_ue4m3_t</code> scale metadata.</div></div></div>
+              <div class="proof-item"><div class="proof-dot">3</div><div><div class="proof-title">The GEMM probe used FlashInfer directly.</div><div class="proof-copy"><code>flashinfer.mm_fp4(..., backend="cutlass", use_nvfp4=True)</code> inside the SGLang/Nemotron image.</div></div></div>
+              <div class="proof-item"><div class="proof-dot">4</div><div><div class="proof-title">Scope is honest.</div><div class="proof-copy">This proves the targeted kernel. A full 120B decode roofline still requires relaunching SGLang under NCU.</div></div></div>
+            </div>
+          </section>
+
+          <section class="panel" aria-label="Nano 30B proof">
+            <div class="panel-head">
+              <div>
+                <div class="panel-kicker">Scale-down proof</div>
+                <h2>Nano 30B confirms the same native direction</h2>
+              </div>
+              <span class="chip magenta">0 Marlin kernels</span>
+            </div>
+            <div class="metric-row">
+              <div class="metric cyan"><div class="label">KV capacity</div><div class="value">8.31M</div><div class="note">tokens · up from 4.79M on conservative native</div></div>
+              <div class="metric green"><div class="label">Peak aggregate</div><div class="value">1137</div><div class="note">tok/s at c128 on u80 profile</div></div>
+              <div class="metric amber"><div class="label">c64 gain</div><div class="value">+6.6%</div><div class="note">975.45 → 1040.08 tok/s</div></div>
+            </div>
+          </section>
+        </div>
+
+        <aside class="stack">
+          <section class="panel" aria-label="runtime configuration">
+            <div class="panel-head">
+              <div>
+                <div class="panel-kicker">Current stable launch</div>
+                <h2>Safe Super 120B profile</h2>
+              </div>
+            </div>
+            <div class="panel pad">
+              <div class="code-card">
+                <div class="code-title">critical settings</div>
+                <pre><span class="token-green">SGLANG_ENABLE_SPEC_V2=1</span>
+--quantization modelopt_fp4
+--fp4-gemm-backend <span class="token-cyan">flashinfer_cutlass</span>
+--moe-runner-backend <span class="token-cyan">flashinfer_cutlass</span>
+--speculative-algorithm NEXTN
+--speculative-num-draft-tokens 2
+--disable-radix-cache
+--mem-fraction-static 0.72
+--max-running-requests 1
+--reasoning-parser nemotron_3</pre>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel" aria-label="memory story">
+            <div class="panel-head">
+              <div>
+                <div class="panel-kicker">Why this stays alive</div>
+                <h2>No second 120B load</h2>
+              </div>
+              <span class="chip green">7.08 GiB draft</span>
+            </div>
+            <div class="timeline">
+              <div class="step"><div class="step-num">MAIN</div><div class="step-body"><strong>NemotronHForCausalLM</strong><p>75.74 GiB model memory, 418.33s load, 1,775,159 KV tokens.</p></div></div>
+              <div class="step"><div class="step-num">DRAFT</div><div class="step-body"><strong>NemotronHForCausalLMMTP</strong><p>Built-in draft layer costs 7.08 GiB, not another 75 GiB checkpoint.</p></div></div>
+              <div class="step"><div class="step-num">GRAPH</div><div class="step-body"><strong>CUDA graph decode path</strong><p>2.16 GiB capture footprint; latest decode logs show CUDA graph active.</p></div></div>
+              <div class="step"><div class="step-num">HEALTH</div><div class="step-body"><strong>Freeze path avoided</strong><p>No fresh Xid/OOM/invalid mmap pattern during the successful MTP window.</p></div></div>
+            </div>
+          </section>
+
+          <section class="callout" aria-label="interpretation">
+            <div class="callout-icon">!</div>
+            <div>
+              <h3>What is proven vs. what remains</h3>
+              <p style="margin-top:8px">Proven: GB10 can run SM120 block-scaled FP4 tensor kernels through FlashInfer/CUTLASS, and Super 120B MTP delivers a real decode gain. Remaining: full end-to-end 120B roofline requires relaunching the server under NCU.</p>
+            </div>
+          </section>
+
+          <section class="panel pad" aria-label="source files">
+            <div class="panel-kicker">Evidence files</div>
+            <p class="compact-note" style="margin-top:14px">ncu_priv_container_flashinfer_nvfp4_tensor_20260519T024933Z.csv<br/>ncu_nvfp4_tensor_summary.json<br/>live_mtp_verification_20260519T023953Z.json<br/>kernel_backend_evidence_20260519T024009Z.txt</p>
+          </section>
+        </aside>
+      </section>
+
+      <footer class="footer">
+        <div>nvidia/nemotron-3-super · GB10 · ModelOpt NVFP4 · FlashInfer/CUTLASS · NEXTN/EAGLE MTP · root NCU FP4 tensor counters</div>
+        <div class="watermark">@mr-r0b0t — r0b0tlab</div>
+      </footer>
+    </article>
+  </main>
+</body>
+</html>
